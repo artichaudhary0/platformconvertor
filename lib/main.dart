@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:platformconvertor/provider/increment_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,82 +14,58 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        Provider(
+          create: (_) => IncrementProvider(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: const BoilerPlateCode(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+class BoilerPlateCode extends StatefulWidget {
+  const BoilerPlateCode({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<BoilerPlateCode> createState() => _BoilerPlateCodeState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _currentIndex = 0;
+class _BoilerPlateCodeState extends State<BoilerPlateCode> {
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<IncrementProvider>(context, listen: false);
+    log("build");
+    log("build method");
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: const Text("Flutter demo"),
       ),
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Container(
-                height: 400,
-                width: 600,
-                child: Stepper(
-                    onStepContinue: (){
-                     if(_currentIndex<3)
-                       {
-                         setState(() {
-                           _currentIndex  += 1 ;
-                         });
-                       }
-                    },
-                    onStepCancel: (){
-                
-                      if(_currentIndex>0)
-                      {
-                        setState(() {
-                          _currentIndex  -= 1 ;
-                        });
-                      }
-                    },
-                    onStepTapped: (index){
-                      setState(() {
-                        _currentIndex = index;
-                      });
-                    },
-                    type: StepperType.horizontal,
-                    physics: const ScrollPhysics(
-                      parent: ScrollPhysics()
-                    ),
-                
-                    currentStep: _currentIndex, steps: <Step>[
-                  Step(title: Text("Enter name"), content: TextField()),
-                  Step(title: Text("Enter name"), content: TextField()),
-                  Step(title: Text("Enter name"), content: TextField()),
-                  Step(title: Text("Enter name"), content: TextField()),
-                
-                ]),
-              ),
-            ),
-            Text("$_currentIndex"),
+            const Text("You have pressed button this many time"),
+            Consumer<IncrementProvider>(builder: (context, pro, child) {
+              return Text("${pro.increment}");
+            })
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          provider.incrementValue();
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
