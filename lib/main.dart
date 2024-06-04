@@ -11,26 +11,37 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(
+        ChangeNotifierProvider(
           create: (_) => IncrementProvider(),
         ),
-      ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
+        ChangeNotifierProvider(
+          create: (_) => SwitchProvider(),
         ),
-        home: const BoilerPlateCode(),
+      ],
+      child: Consumer<SwitchProvider>(
+        builder: (context,pro,child){
+          return MaterialApp(
+            title: 'Flutter Demo',
+            themeMode: themeVar ? ThemeMode.dark : ThemeMode.light,
+            theme: ThemeData(
+                brightness: Brightness.light
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+            ),
+            home: const BoilerPlateCode(),
+          );
+        },
       ),
     );
   }
 }
+
+bool themeVar = true;
 
 class BoilerPlateCode extends StatefulWidget {
   const BoilerPlateCode({super.key});
@@ -43,6 +54,7 @@ class _BoilerPlateCodeState extends State<BoilerPlateCode> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<IncrementProvider>(context, listen: false);
+    var provider2 = Provider.of<SwitchProvider>(context, listen: false);
     log("build");
     log("build method");
     return Scaffold(
@@ -57,7 +69,16 @@ class _BoilerPlateCodeState extends State<BoilerPlateCode> {
             const Text("You have pressed button this many time"),
             Consumer<IncrementProvider>(builder: (context, pro, child) {
               return Text("${pro.increment}");
-            })
+            }),
+            Consumer<SwitchProvider>(
+              builder: (context, pro, child) {
+                return Switch(
+                    value: pro.isDark,
+                    onChanged: (value) {
+                      provider2.toggle(value);
+                    });
+              },
+            ),
           ],
         ),
       ),
