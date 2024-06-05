@@ -1,11 +1,23 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:platformconvertor/provider/increment_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:platformconvertor/provider/theme_provider.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'package:platformconvertor/view/home_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  bool themeVar = pref.getBool("isDark") ?? false;
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(isDark: themeVar),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,81 +25,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => IncrementProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => SwitchProvider(),
-        ),
-      ],
-      child: Consumer<SwitchProvider>(
-        builder: (context,pro,child){
-          return MaterialApp(
-            title: 'Flutter Demo',
-            themeMode: themeVar ? ThemeMode.dark : ThemeMode.light,
-            theme: ThemeData(
-                brightness: Brightness.light
-            ),
-            darkTheme: ThemeData(
-              brightness: Brightness.dark,
-            ),
-            home: const BoilerPlateCode(),
-          );
-        },
-      ),
-    );
-  }
-}
-
-bool themeVar = true;
-
-class BoilerPlateCode extends StatefulWidget {
-  const BoilerPlateCode({super.key});
-
-  @override
-  State<BoilerPlateCode> createState() => _BoilerPlateCodeState();
-}
-
-class _BoilerPlateCodeState extends State<BoilerPlateCode> {
-  @override
-  Widget build(BuildContext context) {
-    var provider = Provider.of<IncrementProvider>(context, listen: false);
-    var provider2 = Provider.of<SwitchProvider>(context, listen: false);
-    log("build");
-    log("build method");
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Flutter demo"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text("You have pressed button this many time"),
-            Consumer<IncrementProvider>(builder: (context, pro, child) {
-              return Text("${pro.increment}");
-            }),
-            Consumer<SwitchProvider>(
-              builder: (context, pro, child) {
-                return Switch(
-                    value: pro.isDark,
-                    onChanged: (value) {
-                      provider2.toggle(value);
-                    });
-              },
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          provider.incrementValue();
-        },
-        child: const Icon(Icons.add),
-      ),
-    );
+    return Consumer<ThemeProvider>(builder: (context, value, child){
+      return MaterialApp(
+        title: 'Flutter Demo',
+        theme:  value.getTheme,
+        home: const HomeScreen(),
+      );
+    });
   }
 }
