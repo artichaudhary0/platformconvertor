@@ -9,7 +9,6 @@ ThemeData lightTheme = ThemeData(
 TextStyle lightTextStyle = const TextStyle(fontSize: 20, color: Colors.black);
 TextTheme lightTextTheme = TextTheme(bodyLarge: lightTextStyle);
 
-
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   primaryColor: Colors.black,
