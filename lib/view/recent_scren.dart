@@ -48,18 +48,18 @@ class RecentScreen extends StatelessWidget {
                   ],
                 )),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
-          Text("Today"),
-          SizedBox(
+          const Text("Today"),
+          const SizedBox(
             height: 20,
           ),
           Expanded(
             child: ListView.builder(
                 itemCount: 10,
                 itemBuilder: (context, index) {
-                  return ContactListTile();
+                  return const ContactListTile();
                 }),
           )
         ],
@@ -75,8 +75,8 @@ class ContactListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.0),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         leading: CircleAvatar(

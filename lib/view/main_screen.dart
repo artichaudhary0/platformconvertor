@@ -49,6 +49,10 @@ class MainScreen extends StatelessWidget {
             );
           },
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: const Icon(Icons.line_style),
+        ),
       ),
     );
   }
